@@ -1,2 +1,4 @@
 # FlappyTheFlorest
- My first really complete game. Made in python and with the Arcade library, I hope you like it :)
+### - __*My first really complete game.*__
+Made in __python__ and with the ***Arcade*** library, I hope you like it *:)*
+***
