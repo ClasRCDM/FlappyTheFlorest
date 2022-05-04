@@ -185,7 +185,7 @@ class Tiled_world:
         if v is None:
             tiles.append(object1(object2[0]))
             tiles.append(object1(object2[1]))
-        elif v is not None:
+        else:
             tiles.append(object1(v[0], object2[0]))
             tiles.append(object1(v[1], object2[1]))
 

@@ -148,7 +148,7 @@ class Jogo(FadingView):
     def on_key_press(self, chave, modifiers):
         """ Chama sempre que uma tecla é pressionada. """
 
-        if chave == key.SPACE and self.Modo_jogo not in 'GameplayMorte':
+        if chave == key.SPACE and self.Modo_jogo not in ('Gameplay', 'Morte'):
             self.Modo_jogo = 'Gameplay'
 
             self.pássaro.game_mode = self.Modo_jogo
@@ -157,7 +157,7 @@ class Jogo(FadingView):
             self.backfore.append_after_jump()
             self.pássaro_lista.append(self.pássaro.dash_jump)
 
-        elif self.pássaro_pulo and not self.Modo_jogo == 'Morte':
+        elif self.pássaro_pulo and self.Modo_jogo != 'Morte':
             self.pássaro.pular(chave, self.physics_world)
 
     # World __ property's
@@ -167,8 +167,7 @@ class Jogo(FadingView):
 
     @Modo_jogo.setter
     def Modo_jogo(self, game_mode):
-        if isinstance(game_mode, str): self._Modo_jogo = game_mode
-        else: self._Modo_jogo = 'Tela_Inicial'
+        self._Modo_jogo = game_mode if isinstance(game_mode, str) else 'Tela_Inicial'
 
 
 class Copyright(FadingView):

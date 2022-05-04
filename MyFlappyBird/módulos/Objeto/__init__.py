@@ -66,7 +66,7 @@ class Object:
         if not v_pro:
             background.set_position(sprite_size * pos[0] + sprite_size / 2,
                                     sprite_size * pos[1] + sprite_size / 2)
-        elif v_pro:
+        else:
             background.set_position(pos[0], pos[1])
 
     def set_scaling(self, background: Sprite, sprite_scaling: float):

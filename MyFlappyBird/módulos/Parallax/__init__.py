@@ -42,11 +42,11 @@ class Parallax:
     def _return(self, index, background: Object) -> Sprite:
         return background.return_sprite(index)
 
-    def update(s_up, background, vel):
-        s_up.movimento(background, vel)
+    def update(self, background, vel):
+        self.movimento(background, vel)
 
-        s_up.loop_movimento(background, 0)
-        s_up.loop_movimento(background, 1)
+        self.loop_movimento(background, 0)
+        self.loop_movimento(background, 1)
 
     def movimento(self, background, vel):
 
@@ -124,7 +124,4 @@ class Spawn_leaves:
 
     def generate(self) -> list:
         poss = Iterator(EL_LEAVES_POS, op=1)
-        leaves = [self.leave((self.x + pos[0], self.y + pos[1]))
-                  for pos in poss]
-
-        return leaves
+        return [self.leave((self.x + pos[0], self.y + pos[1])) for pos in poss]

@@ -121,21 +121,21 @@ class GUI_world:
                   current_score: bool) -> bool:
         """ Sets and adds the points on the scoreboard """
 
-        if collision.center_x >= bird.center_x <= collision.center_x and current_score:
-            add_score[0] += 1
-            self.Score_endpoints += 1
+        if not collision.center_x >= bird.center_x <= collision.center_x or not current_score:
+            return collision.center_x <= bird.center_x
+        add_score[0] += 1
+        self.Score_endpoints += 1
 
-            if add_score[0] > 9:
-                add_score[1] += 1
-                self.GUI['PT_at2'].set_sprite_number(
-                    diretorio, add_score[1])
-                add_score[0] = 0
+        if add_score[0] > 9:
+            add_score[1] += 1
+            self.GUI['PT_at2'].set_sprite_number(
+                diretorio, add_score[1])
+            add_score[0] = 0
 
-            self.GUI['PT'].set_sprite_number(
-                diretorio, add_score[0])
+        self.GUI['PT'].set_sprite_number(
+            diretorio, add_score[0])
 
-            return False
-        return True if collision.center_x <= bird.center_x else False
+        return False
 
     def draw(self):
         def draw_points(x, y):

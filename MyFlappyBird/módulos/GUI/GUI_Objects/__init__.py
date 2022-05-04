@@ -100,10 +100,10 @@ class FadingView(View):
     def update_fade(self, next_view=None):
         if self.fade_out is not None:
             self.fade_out += FADE_RATE
-            if self.fade_out is not None and self.fade_out > 255 and next_view is not None:
-                game_view = next_view()
-                game_view.setup()
-                self.window.show_view(game_view)
+        if self.fade_out is not None and self.fade_out > 255 and next_view is not None:
+            game_view = next_view()
+            game_view.setup()
+            self.window.show_view(game_view)
 
         if self.fade_in is not None:
             self.fade_in -= FADE_RATE

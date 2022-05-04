@@ -120,7 +120,7 @@ class Bird(Sprite):
     def pular(self, chave, física):
         """ Jump bird """
 
-        if chave == key.UP or chave == key.SPACE:
+        if chave in [key.UP, key.SPACE]:
             impulse = (0, B_JUMP_IMPULSE)
             física.apply_impulse(self, impulse)
 
