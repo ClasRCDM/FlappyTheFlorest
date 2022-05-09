@@ -1,5 +1,6 @@
 """
-Name: FlappyBird: The Forest!
+Name: FlappyBird: The Forest!.
+
 Description: ->
 A Flappy Bird where the objective is to pick up fruits
 and go through the logs and reach as many points as possible. <-
@@ -19,8 +20,8 @@ Copyright: (c) Clas_RCDM
 #  Init my World  #
 ###################
 
-from FlappyBirdTheForest import Copyright
+from FlappyBirdTheForest import Jogo
 from módulos.GUI.GUI_Objects import Set_window
 
 if __name__ == '__main__':
-    Set_window(Copyright)
+    Set_window(Jogo)

@@ -1,4 +1,4 @@
-"""Parallax program file"""
+"""Class Parallax for game."""
 
 # & /Imports Parallax\ & #
 # ------ General defs ------ #
@@ -15,15 +15,16 @@ from módulos.Effect import Leave_particle
 
 # Itens parallax -- Parallax __ PLL, BG, W, SL
 class Parallax:
-    """ Parallax class file """
+    """Parallax | Create class file."""
+
+    __slots__ = 'MAX_X', 'PONTO_X', 'layer'
 
     def __init__(self, x, y,
                  diretorio: str,
                  index, image,
                  max_x, ponto_max,
                  flipp=False):
-        """ Init Parallax """
-
+        """Create Parallax and variables."""
         self.MAX_X = max_x
         self.PONTO_X = ponto_max
 
@@ -34,7 +35,7 @@ class Parallax:
         self.set_psize(self.layer, 2)
 
     def set_psize(self, layer, value):
-
+        """Set size in layers to Parallax."""
         nuns = Iterator(value)
         for index in nuns:
             layer.set_size(self.layer.return_sprite(index), index)
@@ -43,29 +44,33 @@ class Parallax:
         return background.return_sprite(index)
 
     def update(self, background, vel):
+        """Update moves."""
         self.movimento(background, vel)
 
         self.loop_movimento(background, 0)
         self.loop_movimento(background, 1)
 
     def movimento(self, background, vel):
-
+        """Set move to all layers."""
         nuns = Iterator(2)
         for index in nuns:
             background.movement_aside(background.return_sprite(index), vel)
 
     def loop_movimento(self, background, index):
+        """Do the loop move after x position."""
         if background.return_sprite(index).center_x >= self.MAX_X:
             background.return_sprite(index).center_x = self.PONTO_X
 
 
 class Background(Object):
-    """ Background Sprites """
+    """Parallax | Background Florest."""
+
+    __slots__ = 'background_texturas'
 
     def __init__(self, x, y,
                  diretorio, index,
                  image, flip_vertical=False):
-        """ Init Background """
+        """Background florest variables."""
         from numpy import arange
         super().__init__(diretorio, ARQUIVO_BACKGROUND)
 
@@ -80,29 +85,30 @@ class Background(Object):
             ) for _ in arange(2)]
 
     def set_size(self, background, valor):
+        """Set size/pos florest."""
         self.set_location(background, F_SPRITE_SIZE,
                           (self.x[valor], self.y))
         self.set_scaling(background, F_SPRITE_TSCALING)
 
     def return_sprite(self, index) -> Sprite:
-        """ return background sprite """
+        """Return background sprite."""
         return self.background_texturas[index]
 
     def movement_aside(self, background, vel):
+        """Move aside."""
         background.center_x += vel
 
 
 class Water:
-    """ Water init """
+    """Parallax | Water."""
 
     def __init__(self, x, y, altura, largura, DIRETORIO):
-        """ Water variables """
-
+        """Water variables."""
         self.x, self.y = x, y
         self.altura, self.largura = altura, largura
 
     def draw(self):
-        """ Draw Water """
+        """Draw Water."""
         draw_rectangle_filled(self.x, self.y,
                               self.largura, self.altura,
                               csscolor.AQUA)
@@ -112,16 +118,20 @@ class Water:
 
 
 class Spawn_leaves:
-    def __init__(self, pos, diretorio, física) -> None:
+    """Leaf spwan constant."""
 
+    def __init__(self, pos, diretorio, física) -> None:
+        """Variables to loop spwan."""
         self.x, self.y = pos
 
         self.diretorio = diretorio
         self.física = física
 
     def leave(self, pos) -> Leave_particle:
+        """Return leaves."""
         return Leave_particle(pos, self.diretorio, self.física)
 
     def generate(self) -> list:
+        """Leaf generator."""
         poss = Iterator(EL_LEAVES_POS, op=1)
         return [self.leave((self.x + pos[0], self.y + pos[1])) for pos in poss]

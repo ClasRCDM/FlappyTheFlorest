@@ -1,9 +1,9 @@
-"""Class to GUI"""
+"""Class to GUI/HUD world."""
 
 # & /Imports GUI\ & #
 # ------ General defs ------ #
-from arcade import draw_text, color
 from arcade import Sprite
+from arcade import draw_text, color
 # ------ Window modules ------ #
 from módulos.GUI.GUI_Objects import *
 # & \Imports GUI/ & #
@@ -11,10 +11,14 @@ from módulos.GUI.GUI_Objects import *
 
 # General GUI -- GUI __ GW
 class GUI_world:
-    """ GUI World """
+    """GUI World settings."""
 
-    def __init__(self, game_mode, diretorio, window):
-        """ Init GUI """
+    __slots__ = ('GUI_manager', 'game_mode', 'backfore',
+                 '_Score_endpoints', 'GUI_menu', 'GUI_defeat',
+                 'GUI_closets', 'v_box', 'GUI_buttons', 'GUI')
+
+    def __init__(self, game_mode, backfore, diretorio, window):
+        """GUI variables/HUD."""
         from arcade import SpriteList
         from arcade.gui import UIManager, UIBoxLayout
 
@@ -24,6 +28,7 @@ class GUI_world:
 
         self.game_mode = game_mode
         self.Score_endpoints = 0
+        self.backfore = backfore
 
         # -- Groups GUI
         # Start Game
@@ -42,7 +47,7 @@ class GUI_world:
 
     # GUI __ Settings
     def buttons(self, window):
-        """ Create buttons Exit/Restart for window """
+        """Create buttons Exit/Restart for window."""
         from arcade.gui import UIAnchorWidget
 
         self.add_view_buttons(
@@ -57,6 +62,7 @@ class GUI_world:
         )
 
     def set_buttons(self) -> dict:
+        """Return buttions in to viewport lose."""
         # Create the buttons
         from arcade.gui import UIFlatButton
 
@@ -64,8 +70,7 @@ class GUI_world:
                 'restart_button': UIFlatButton(text="Restart", width=120, height=42)}
 
     def add_view_buttons(self, window, exit, restart):
-        """ Add buttions in to viewport lose """
-
+        """Add buttions in to viewport lose."""
         # Add to viewport buttons
         self.v_box.add(
             exit.with_space_around(right=20, top=241, left=34))
@@ -76,7 +81,7 @@ class GUI_world:
             exit, restart, window)
 
     def buttons_events(self, exit, restart, window):
-        """ Events and actions to buttons """
+        """Events and actions to buttons, Exit/Restart."""
         from arcade import exit as arcade_exit
 
         @exit.event("on_click")
@@ -88,8 +93,7 @@ class GUI_world:
             window.setup()
 
     def set_gui(self, diretorio: str) -> dict:
-        """ Create all GUI """
-
+        """Create all GUI variables."""
         return {'DERROTA': Defeat((3.6, 11.5), diretorio),
                 'MENU_restart': Menu_restart((3.6, 8.26), diretorio),
                 'PT_placar': Points_score((0.75, 12.26), diretorio),
@@ -99,8 +103,7 @@ class GUI_world:
                 'PT_at2':  Score((0.92, 12.45), diretorio, 2.3)}
 
     def append_tiles(self):
-        """ Add GUI for screen """
-
+        """Add GUI for screen."""
         # -$ Sprite group $-
 
         # -- Set GUI_loser sprites -- #
@@ -119,11 +122,12 @@ class GUI_world:
                   bird: Sprite, diretorio: str,
                   add_score: list[int],
                   current_score: bool) -> bool:
-        """ Sets and adds the points on the scoreboard """
+        """Sets and adds the points on the scoreboard."""
 
         if not collision.center_x >= bird.center_x <= collision.center_x or not current_score:
             return collision.center_x <= bird.center_x
         add_score[0] += 1
+        self.backfore.tronco_speed[0] += 5
         self.Score_endpoints += 1
 
         if add_score[0] > 9:
@@ -135,16 +139,13 @@ class GUI_world:
         self.GUI['PT'].set_sprite_number(
             diretorio, add_score[0])
 
-        return False
-
     def draw(self):
+        """Draw GUI in screen."""
         def draw_points(x, y):
             draw_text(f"{self.Score_endpoints}",
                       x, y,
                       color.BROWN_NOSE, 10.5,
                       font_name="Kenney Blocks")
-
-        """ Draw GUI """
         self.GUI_menu.draw(pixelated=True)
 
         if self.game_mode == 'Morte':
@@ -158,12 +159,13 @@ class GUI_world:
             elif self.Score_endpoints <= 999:
                 draw_points(361.5, 482)
 
-        elif self.game_mode in 'GameplayTela_Inicial':
+        elif self.game_mode in ('Gameplay', 'Tela_Inicial'):
             self.GUI_closets.draw(pixelated=True)
 
     # GUI __ property's
     @property
     def Score_endpoints(self):
+        """Return points table."""
         return self._Score_endpoints
 
     @Score_endpoints.setter

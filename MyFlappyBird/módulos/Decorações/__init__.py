@@ -1,4 +1,4 @@
-"""Class to decorate"""
+"""Class to sprites for Decorations world."""
 
 # & /Imports decorations\ & #
 # ------ Game variables ------ #
@@ -11,10 +11,10 @@ from módulos.Objeto import Object_sprite
 
 # Sprites -- Decoration __ BR, CCo
 class Big_rock(Object_sprite):
-    """ Sprite Big rock """
+    """Sprite | Starting stone."""
 
     def __init__(self, pos, diretorio):
-        """ Setup Rock """
+        """Variables to starting stone."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING
@@ -25,15 +25,16 @@ class Big_rock(Object_sprite):
         self.set_pos(B_SPRITE_SIZE)
 
     def move(self, vel):
+        """Move stone out of the window."""
         if self.center_x <= 500:
             self.center_x += vel
 
 
 class Clas_copyright(Object_sprite):
-    """ Sprite Big rock """
+    """Sprite | Copyright for game."""
 
     def __init__(self, pos, diretorio):
-        """ Setup Rock """
+        """Variables for sprite copyright."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING-3

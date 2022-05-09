@@ -1,4 +1,4 @@
-"""Class to effects"""
+"""Class to sprites for Effects world."""
 
 # & /Imports effects\ & #
 # ------ General defs ------ #
@@ -14,10 +14,12 @@ from módulos.Objeto import Object_sprite
 
 # Particles Sprites -- Effect __ LP, DDJ
 class Leave_particle(Object_sprite):
-    """ Leaves """
+    """Leaves to background."""
+
+    __slots__ = 'side', 'speed_x', 'speed_y', 'play_speed'
 
     def __init__(self, pos, diretorio, física):
-        """ Starting sheets """
+        """Effects | Starting sheets."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING + 1
@@ -36,12 +38,12 @@ class Leave_particle(Object_sprite):
         self.set_física(física)
 
     def random_pos(self):
+        """Set random position."""
         self.speed_x = self.speed_y = randint(0, 2)
         self.set_pos(B_SPRITE_SIZE)
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
-        """ Handle being moved by the pymunk engine """
-
+        """Handle being moved by the pymunk engine."""
         # Leaf fall movement
         self.effects(physics_engine, d_angle)
 
@@ -49,6 +51,7 @@ class Leave_particle(Object_sprite):
             self.kill()
 
     def set_física(self, física):
+        """Create/Set physics for the obstacles."""
         física.add_sprite(self,
                           mass=2,
                           max_vertical_velocity=450,
@@ -56,12 +59,14 @@ class Leave_particle(Object_sprite):
                           collision_type='item')
 
     def effects(self, phy, angle):
-        """ Leaf fall movements """
+        """Leaf fall movements."""
         from operator import add, sub
 
         moddif = None
-        if self.side == 0: moddif = add
-        elif self.side == 1: moddif = sub
+        if self.side == 0:
+            moddif = add
+        elif self.side == 1:
+            moddif = sub
 
         moddif(round(uniform(0.5, 2.5), 2), self.result_angle)
 
@@ -72,8 +77,12 @@ class Leave_particle(Object_sprite):
 
 
 class dash_dust_jump(Object_sprite):
+    """Smoke from the bird's initial leap."""
+
+    __slots__ = 'anim', 'index_texture', 'frames_texture'
+
     def __init__(self, pos, diretorio):
-        """ init dash animation """
+        """Variables smoke/dash animation."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING-2.1
@@ -94,6 +103,7 @@ class dash_dust_jump(Object_sprite):
         self.frames_texture: int = 4
 
     def animation(self):
+        """Animate/Frame after jump."""
         self.set_animation_sprites(
             self.frames_texture, 0.16, self.anim)
 
@@ -101,5 +111,6 @@ class dash_dust_jump(Object_sprite):
             self.kill()
 
     def set_animation_sprites(self, q_sprite, speed_sprite, sprites):
+        """Set frame sprite to animation."""
         self.index_texture = (self.index_texture + speed_sprite) % q_sprite
         self.texture = sprites[int(self.index_texture)]

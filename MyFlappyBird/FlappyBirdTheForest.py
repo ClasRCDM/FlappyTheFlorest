@@ -1,4 +1,4 @@
-"""Main program file"""
+"""Main program file the FlappyBirdTheForest."""
 
 # & /Imports World\ & #
 # ------ General defs ------ #
@@ -24,12 +24,14 @@ from módulos.GUI.GUI_Objects import FadingView
 ########################
 
 class Jogo(FadingView):
-    """
-    Main class of the game.
-    """
+    """Main class of the game."""
+
+    __slots__ = ('Score', 'Score_can', 'GUI',
+                 'backfore', 'physics_engine',
+                 'pássaro', 'pássaro_lista', 'pássaro_pulo')
 
     def __init__(self):
-        """ Main function """
+        """Jogo init function."""
         super().__init__()
         # arcade.enable_timings()  # habilitar quando for ver o fps
 
@@ -56,7 +58,7 @@ class Jogo(FadingView):
 
     # World __ Settings
     def setup(self):
-        """ Inicia o jogo. E caso seja chamado o reinicia. """
+        """Inicia o jogo. E caso seja chamado o reinicia."""
         self.Modo_jogo: str = 'Tela_Inicial'
         self.pássaro_pulo: bool = True
 
@@ -68,7 +70,7 @@ class Jogo(FadingView):
         self.backfore = Tiled_world(self.diretorio)
 
         # GUI
-        self.GUI = GUI_world(self.Modo_jogo, self.diretorio, self)
+        self.GUI = GUI_world(self.Modo_jogo, self.backfore, self.diretorio, self)
 
         # Grupo/Sprite do pássaro/Bird
         self.pássaro_lista = SpriteList()
@@ -97,7 +99,7 @@ class Jogo(FadingView):
 
         # %__ Physics/Collision response to obstacle __$ #
         def wall_collid(sprite, _wall_sprite, _arbiter, _space, _data):
-            """ Called for Player/Wall collision """
+            """Call for Player/Wall collision."""
             if self.pássaro_pulo and self.Modo_jogo != 'Morte':
                 self.pássaro_pulo, self.Modo_jogo = False, 'Morte'
 
@@ -107,7 +109,6 @@ class Jogo(FadingView):
 
     def on_draw(self):
         """Renderisa tudo que a na tela."""
-
         self.clear()
 
         # Draw tiles
@@ -118,7 +119,7 @@ class Jogo(FadingView):
         self.draw_fadings()
 
     def on_update(self, delta_time):
-        """ Movimentos e lógicas do jogo. """
+        """Movimentos e lógicas do jogo."""
         self.update_fade(next_view=Copyright)
 
         self.pássaro.update()
@@ -137,17 +138,13 @@ class Jogo(FadingView):
             self.Modo_jogo = 'Morte'
             self.physics_world.step()
 
-            self.backfore.tile['Obstacles']['layer_8'].moving(
-                self.physics_world, (1, 0))
-            self.backfore.tile['Obstacles']['layer_9'].moving(
-                self.physics_world, (1, 0))
+            self.backfore.move_obstacles(self.physics_world, (1, 0))
 
         self.physics_leave.step()
         # print(arcade.get_fps())  # Get fps
 
     def on_key_press(self, chave, modifiers):
-        """ Chama sempre que uma tecla é pressionada. """
-
+        """Chama sempre que uma tecla é pressionada."""
         if chave == key.SPACE and self.Modo_jogo not in ('Gameplay', 'Morte'):
             self.Modo_jogo = 'Gameplay'
 
@@ -163,6 +160,7 @@ class Jogo(FadingView):
     # World __ property's
     @property
     def Modo_jogo(self):
+        """Return Game Mode."""
         return self._Modo_jogo
 
     @Modo_jogo.setter
@@ -171,10 +169,12 @@ class Jogo(FadingView):
 
 
 class Copyright(FadingView):
-    """ Show creation details """
+    """Show creation details."""
+
+    __slots__ = 'copyright', 'copyright_list'
 
     def __init__(self):
-        """ Clas copyright """
+        """Clas copyright."""
         super().__init__()
         self.window.center_window()
 
@@ -185,28 +185,35 @@ class Copyright(FadingView):
         self.copyright_list: Optional[SpriteList] = None
 
     def setup(self):
-        """ Init creation """
+        """Creation variables."""
         self.copyright = Clas_copyright((3.5, 6.6), self.diretorio)
         self.copyright_list = SpriteList()
         self.copyright_list.append(self.copyright)
 
     def on_update(self, delta_time):
+        """Fade window."""
         self.update_fade(next_view=Jogo)
 
         if self.fade_out is None and self.fade_in <= 5:
             self.fade_out = 0
 
     def on_draw(self):
+        """Draw copyright."""
         self.clear()
 
         self.copyright_list.draw()
         self.draw_fadings()
 
     def on_key_press(self, chave, _modifiers):
+        """."""
         self.mode_view(chave)
 
     def mode_view(self, chave):
-        """ Handle key presses. In this case, we'll just count a 'space' as
-        game over and advance to the game over view. """
+        """
+        Handle key presses.
+
+        In this case, we'll just count a 'space' as
+        game over and advance to the game over view.
+        """
         if self.fade_out is None and chave == key.SPACE:
             self.fade_out = 0

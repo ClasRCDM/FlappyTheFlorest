@@ -1,4 +1,4 @@
-"""Class to objects for GUI"""
+"""Class to objects/sprites for GUI/HUD."""
 
 # & /Imports objects for GUI\ & #
 # ------ General defs ------ #
@@ -20,7 +20,10 @@ from módulos.Objeto import Object_sprite
 
 # Sprites -- GUI __ DF, MR, PS, S, SBM
 class Defeat(Object_sprite):
+    """HUD | Sprite for defeat."""
+
     def __init__(self, pos, diretorio):
+        """Variables to Defeat/HUD."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING
@@ -32,7 +35,10 @@ class Defeat(Object_sprite):
 
 
 class Menu_restart(Object_sprite):
+    """HUD | Menu after death."""
+
     def __init__(self, pos, diretorio):
+        """Variables menu."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING
@@ -44,7 +50,10 @@ class Menu_restart(Object_sprite):
 
 
 class Points_score(Object_sprite):
+    """HUD | Table score."""
+
     def __init__(self, pos, diretorio):
+        """Variables for score."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING
@@ -56,7 +65,10 @@ class Points_score(Object_sprite):
 
 
 class Score(Object_sprite):
+    """HUD | Numbers points."""
+
     def __init__(self, pos, diretorio, size=0):
+        """Variables to numbers game."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING-size
@@ -71,12 +83,16 @@ class Score(Object_sprite):
         self.set_pos(B_SPRITE_SIZE)
 
     def set_sprite_number(self, diretorio, index):
+        """Set index to sprite number."""
         self.set_sprite(self.sprite_loc(
             diretorio, self.numbers[index]))
 
 
 class Scoreboard_menu(Object_sprite):
+    """HUD | Scoreboard_menu world."""
+
     def __init__(self, pos, diretorio):
+        """Variables scoreboard."""
         super().__init__(pos[0], pos[1])
 
         self.scale: float = B_SPRITE_TSCALING
@@ -89,15 +105,19 @@ class Scoreboard_menu(Object_sprite):
 
 # Window -- GUI __ FV, SW
 class FadingView(View):
-    """ View transition """
+    """HUD | View transition."""
+
     diretorio: str = path.join(getcwd(), ARQUIVO)
+    __slots__ = 'fade_out', 'fade_in'
 
     def __init__(self):
+        """Variables fading."""
         super().__init__()
         self.fade_out = None
         self.fade_in = 255
 
     def update_fade(self, next_view=None):
+        """Animation fade view transition."""
         if self.fade_out is not None:
             self.fade_out += FADE_RATE
         if self.fade_out is not None and self.fade_out > 255 and next_view is not None:
@@ -107,14 +127,17 @@ class FadingView(View):
 
         if self.fade_in is not None:
             self.fade_in -= FADE_RATE
-            if self.fade_in <= 0: self.fade_in = None
+            if self.fade_in <= 0:
+                self.fade_in = None
 
     def draw_fading(self, fade):
+        """Draw bords fading."""
         draw_rectangle_filled(self.window.width / 2, self.window.height / 2,
                               self.window.width, self.window.height,
                               (0, 0, 0, fade))
 
     def draw_fadings(self):
+        """Draw/Check faddings."""
         if self.fade_out is not None:
             self.draw_fading(self.fade_out)
         elif self.fade_in is not None:
@@ -123,7 +146,7 @@ class FadingView(View):
 
 # -- DEFs -- #
 def Set_window(modulo):
-    """ Create window """
+    """Create/Set window game."""
     window = Window(W_LARGURA, W_ALTURA, W_TÍTULOS)
 
     # Start the module and add it to the window

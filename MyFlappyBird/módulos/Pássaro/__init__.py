@@ -1,4 +1,4 @@
-"""Bird class file"""
+"""Class to Bird/Player game."""
 
 # & /Imports Bird\ & #
 # ------ General defs ------ #
@@ -20,17 +20,21 @@ from módulos.Effect import dash_dust_jump
 
 # General bird -- Bird __ B
 class Bird(Sprite):
-    """ Bird Sprite """
+    """Bird | Player."""
+
+    __slots__ = ('game_mode', 'voando_texturas', 'parado_texturas',
+                 'index_texture', 'y_odometer', 'rotação',
+                 'jump_init', 'dash_jump')
 
     @classmethod
     def load_text(cls, name: str, main_path: str, amount: int):
+        """Load texture sequence."""
         return [load_texture_pair(
             f"{main_path}_{name}{texture}.png") for texture in arange(amount)]
 
     def __init__(self, pos: tuple[float, float],
                  diretorio: str, game_mode: str):
-
-        """ Init Bird """
+        """Variables to Player/Bird."""
         super().__init__()
 
         self.x, self.y = pos
@@ -61,8 +65,7 @@ class Bird(Sprite):
 
     # Bird __ Settings
     def update(self):
-        """ Update geral """
-
+        """Update | Change animations."""
         if self.game_mode == 'Tela_Inicial':
             self.set_animation_sprites(
                 self.frames_texture, 0.03, self.parado_texturas)
@@ -75,8 +78,7 @@ class Bird(Sprite):
                 self.dash_jump = None
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
-        """ Handle being moved by the pymunk engine """
-
+        """Flight physics and animation."""
         if self.game_mode == 'Gameplay':
             is_on_ground = physics_engine.is_on_ground(self)
             self.y_odometer += dy
@@ -91,15 +93,18 @@ class Bird(Sprite):
                 self.set_animation_sprites(
                     self.frames_texture, B_ANIMFLY_SPEED, self.voando_texturas)
                 self.rotação -= B_SET_ANGULO
-            else: self.rotação += B_SET_ANGULO-1
+            else:
+                self.rotação += B_SET_ANGULO-1
 
             self.angle = self.rotação  # Define o angulo
             # Não deixa ultrapassar do angulo máximo
-            if self.angle <= B_MAXC_ROTAÇÃO: self.rotação = B_MAXC_ROTAÇÃO
-            elif self.angle >= B_MAXB_ROTAÇÃO: self.rotação = B_MAXB_ROTAÇÃO
+            if self.angle <= B_MAXC_ROTAÇÃO:
+                self.rotação = B_MAXC_ROTAÇÃO
+            elif self.angle >= B_MAXB_ROTAÇÃO:
+                self.rotação = B_MAXB_ROTAÇÃO
 
     def check_windowpos(self) -> bool:
-        """ Check if the player is inside the screen """
+        """Check and Return if the player is inside the screen."""
         if self.center_y >= TELA_CHEIA[0] or self.center_y <= 0:
             return True
         elif self.center_x >= TELA_CHEIA[1] or self.center_x <= 0:
@@ -107,25 +112,23 @@ class Bird(Sprite):
         return False
 
     def set_animation_sprites(self, q_sprite, speed_sprite, sprites):
-        """ Make the animations """
-
+        """Make frame animations."""
         self.x_odometer = 0
         self.index_texture = (self.index_texture + speed_sprite) % q_sprite
         self.texture = sprites[int(self.index_texture)][0]
 
     def set_location(self) -> int | float:
-        """ Return x and y, positions """
+        """Return x and y, positions."""
         return B_SPRITE_SIZE * self.x + B_SPRITE_SIZE / 2, B_SPRITE_SIZE * self.y-245 + B_SPRITE_SIZE / 2
 
     def pular(self, chave, física):
-        """ Jump bird """
-
+        """Jump bird."""
         if chave in [key.UP, key.SPACE]:
             impulse = (0, B_JUMP_IMPULSE)
             física.apply_impulse(self, impulse)
 
     def set_física(self, física):
-        """ Add physics to the bird """
+        """Add physics to the bird/Obstacles."""
         física.add_sprite(self,
                           friction=B_FRICTION,
                           mass=B_MASSA,

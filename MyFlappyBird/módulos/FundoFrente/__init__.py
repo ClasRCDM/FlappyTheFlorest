@@ -1,4 +1,4 @@
-"""Tiled World class file"""
+"""Class to Tiled/TILE world."""
 
 # & /Imports Tiled World\ & #
 # ------ Game variables ------ #
@@ -15,11 +15,18 @@ from módulos.Parallax import Spawn_leaves, Iterator
 
 # General Tile -- Tiled World __ TW
 class Tiled_world:
-    """ Background and Foreground Sprites """
+    """Background and Foreground Sprites."""
+
+    __slots__ = ('tronco_speed', 'tile', 'leaves',
+                 'tile_floresta', 'tile_reflexo',
+                 'tile_obstacles', 'tile_objects',
+                 'tile_effects', 'tile_collision')
 
     def __init__(self, diretorio):
-        """ Init TiledWorld """
+        """Tiledworld variables/TILE."""
         from arcade import SpriteList
+        # Settings
+        self.tronco_speed: list[int] = [100, 0]
 
         # Sprites
         self.tile = self.set_tiles(diretorio)
@@ -36,8 +43,7 @@ class Tiled_world:
         self.tile_effects, self.tile_collision = SpriteList(), SpriteList()
 
     def set_tiles(self, diretorio) -> dict:
-        """ Create all tiles """
-
+        """Create variable all tiles."""
         # -- Objects -- #
         # -Parallax-
         Parallax = self.tile_parallax(diretorio)
@@ -57,6 +63,7 @@ class Tiled_world:
                 'GUI': GUI}
 
     def tile_parallax(self, diretorio) -> dict:
+        """Return Parallax florest."""
         return {'layer_1': self.set_pllx(diretorio, 3.6, 6.4, 2, 'Floresta_Troncos'),
                 'layer_1_sheet': self.set_pllx(diretorio, 3.6, 6.4, 2, 'Floresta_Folhas'),
                 'layer_2': self.set_pllx(diretorio, 3.4, 6, 1, 'Floresta'),
@@ -65,24 +72,23 @@ class Tiled_world:
                 'layer_5': self.set_pllx(diretorio, 15, 16.5, 1, 'Lights')}
 
     def tile_WaterReflection(self, diretorio) -> dict:
-        """ Set to sprites Water """
+        """Return Parallax to sprites Water."""
         return {'layer_6': Water(201, 22, 60, 402, diretorio),
                 'layer_7': self.set_pllx(diretorio, 3.5, -0.89, 0, 'Reflexo', True),
                 'layer_11': self.set_pllx(diretorio, 3.5, -0.89, 0, 'Effect_water', True)}
 
     def tile_collobstacles(self, diretorio) -> dict:
-        """ Set to sprites Obstacles """
+        """Return Parallax to sprites Obstacles."""
         return {'layer_8': Obstacles(-60, 0, diretorio, 0, 'Tronco'),
                 'layer_9': Obstacles(-190, 0, diretorio, 1, 'Tronco'),
                 'layer_collision': Box_collision((2, 6), diretorio)}
 
     def tile_GUI(self, diretorio) -> dict:
-        """ Set to sprites GUI """
+        """Return to starting stone."""
         return {'layer_10': Big_rock((3.3, -0.05), diretorio)}
 
     def append_tiles(self, diretorio, física):
-        """ Add all tiles """
-
+        """Append all tiles/HUD."""
         # -$ Sprite group $-
 
         # -- Set Parallax sprites -- #
@@ -125,13 +131,12 @@ class Tiled_world:
         self.spawns_leaves()
 
     def append_after_jump(self):
-        """ Add collision point """
+        """Append collision point."""
         # -- Set collision for Obstacles sprites
         self.tile_collision.append(self.tile['Obstacles']['layer_collision'])
 
     def update_movs(self, física):
-        """ Moving the sprites  """
-
+        """Update move the sprites/Parallax."""
         nuns = Iterator(PF_SEQUENCIA_SSPEED, op=2)
         for index, speed in nuns:
             self.set_move(f'layer_{index+1}', 'Parallax', speed)
@@ -142,8 +147,7 @@ class Tiled_world:
         self.set_move('layer_11', 'Water', 2)
 
         # Wooden logs movement
-        self.tile['Obstacles']['layer_8'].moving(física, (100, 0))
-        self.tile['Obstacles']['layer_9'].moving(física, (100, 0))
+        self.move_obstacles(física, self.tronco_speed)
 
         if self.tile['Obstacles']['layer_8'].tronco_baixo.center_x < 280:
             self.tile['Obstacles']['layer_collision'].move(
@@ -160,28 +164,31 @@ class Tiled_world:
         # -- General effects
         self.spawns_leaves()
 
+    def move_obstacles(self, física, speed):
+        """Move troncos."""
+        self.tile['Obstacles']['layer_8'].moving(física, (speed), speed, True)
+        self.tile['Obstacles']['layer_9'].moving(física, (speed), speed, True)
+
     def set_move(self, layer, slot, vel):
-        """ Move parallax sprite """
+        """Update move parallax sprite."""
         self.tile[slot][layer].update(self.tile[slot][layer].layer, vel)
 
     def spawns_leaves(self):
-        """ Leaf spawn with physics  """
-
+        """Leaf spawn with physics."""
         if len(self.tile_effects) <= 0:
             for effect in self.leaves.generate():
                 effect.random_pos()
                 self.tile_effects.append(effect)
 
     def return_parallax(self, tiles, layer):
-        """ Set the parallax to the group sprite """
-
+        """Append the parallax to the group sprite."""
         tiles.append(self.tile['Parallax'][layer]._return(
             0, self.tile['Parallax'][layer].layer))
         tiles.append(self.tile['Parallax'][layer]._return(
             1, self.tile['Parallax'][layer].layer))
 
     def return_sprites(self, tiles, object1, object2, v=None):
-        """ Add sprites to drawing lists """
+        """Append sprites to drawing lists."""
         if v is None:
             tiles.append(object1(object2[0]))
             tiles.append(object1(object2[1]))
@@ -193,13 +200,12 @@ class Tiled_world:
                  diretorio,
                  x, y, index,
                  modelo, flip=False) -> Parallax:
-        """ Create object Parallax """
-
+        """Return object Parallax."""
         return Parallax(x, y, diretorio, index, modelo,
                         PF_MAX_HORIZONTAL, PF_PONTO_DE_VOLTA, flipp=flip)
 
     def set_física(self, física):
-        """ Create physics for the obstacles """
+        """Create/Set physics for the obstacles."""
         from arcade import PymunkPhysicsEngine
 
         física.add_sprite_list(self.tile_obstacles,
@@ -208,7 +214,7 @@ class Tiled_world:
                                body_type=PymunkPhysicsEngine.DYNAMIC)
 
     def draw(self):
-        """ Draw sprites groups """
+        """Draw Tiled/TILE in screen."""
         self.tile_collision.draw(pixelated=True)
 
         self.tile_floresta.draw(pixelated=True)
